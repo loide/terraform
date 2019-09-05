@@ -11,20 +11,11 @@ resource "aws_instance" "example" {
   # the public ssh key
   key_name = "${aws_key_pair.mykeypair.key_name}"
 
+  # user data
+  user_data = "${data.template_cloudinit_config.cloudinit-example.rendered}"
+
   provisioner "local-exec" {
     command = "echo ${aws_instance.example.private_ip} >> private_ips.txt"
-  }
-
-  provisioner "file" {
-    source = "script.sh"
-    destination = "/tmp/script.sh"
-  }
-
-  provisioner "remote-exec" {
-    inline = [
-      "chmod +x /tmp/script.sh",
-      "sudo /tmp/script.sh"
-    ]
   }
 }
 
